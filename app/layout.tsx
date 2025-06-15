@@ -21,21 +21,24 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "AGENT-M3c | AI-Enhanced Collaboration Platform",
+  title: "ADSTech | Next-Gen AI Platform - Zero-to-Deploy Blueprint",
   description:
-    "Production-ready AI platform with real-time collaboration, multi-agent orchestration, and enterprise-grade security for healthcare, legal, and defense sectors.",
+    "Defense-grade AI platform with domain specialization in oncology, defense, legal, and enterprise. Real-time multi-modal interaction with military-standard security.",
   keywords: [
+    "ADSTech",
     "AI platform",
-    "real-time collaboration",
-    "multi-agent AI",
-    "enterprise security",
-    "healthcare AI",
+    "defense-grade security",
+    "oncology AI",
     "legal AI",
-    "defense AI",
+    "enterprise AI",
+    "HIPAA compliant",
+    "SOC2 compliant",
+    "vector memory",
+    "real-time collaboration",
   ],
-  authors: [{ name: "Agile Defense Systems" }],
-  creator: "Agile Defense Systems",
-  publisher: "Agile Defense Systems",
+  authors: [{ name: "Agile Defense Systems Technology" }],
+  creator: "ADSTech",
+  publisher: "ADSTech",
   robots: {
     index: true,
     follow: true,
@@ -50,15 +53,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://agent-m3c.com",
-    title: "AGENT-M3c | AI-Enhanced Collaboration Platform",
-    description: "Production-ready AI platform with real-time collaboration and enterprise-grade security.",
-    siteName: "AGENT-M3c",
+    url: "https://adstech.ai",
+    title: "ADSTech | Next-Gen AI Platform",
+    description: "Defense-grade AI platform with domain specialization and military-standard security.",
+    siteName: "ADSTech",
   },
   twitter: {
     card: "summary_large_image",
-    title: "AGENT-M3c | AI-Enhanced Collaboration Platform",
-    description: "Production-ready AI platform with real-time collaboration and enterprise-grade security.",
+    title: "ADSTech | Next-Gen AI Platform",
+    description: "Defense-grade AI platform with domain specialization and military-standard security.",
   },
   verification: {
     google: "your-google-verification-code",

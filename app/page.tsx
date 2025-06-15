@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { ArrowRight, Shield, Target, Users, TrendingUp, Award } from "lucide-react"
+import { Shield, Target, Users, Brain, Video, FileText } from "lucide-react"
 import { BusinessAssistant } from "@/components/3d-assistant/business-assistant"
 import { cn } from "@/lib/utils"
 import { Suspense } from "react"
@@ -42,12 +42,12 @@ export default function ExecutiveLandingPage() {
             <div className="container px-6 mx-auto">
               <div className="text-center mb-16">
                 <div className="inline-block rounded-lg bg-gold-500/20 px-3 py-1 text-sm text-gold-400 font-medium mb-4">
-                  Platform Capabilities
+                  ADSTech Platform Capabilities
                 </div>
-                <h2 className="text-4xl md:text-5xl font-serif font-bold text-white mb-6">Executive Command Center</h2>
+                <h2 className="text-4xl md:text-5xl font-serif font-bold text-white mb-6">Next-Gen AI Platform</h2>
                 <p className="max-w-3xl mx-auto text-xl text-slate-300">
-                  Comprehensive tools and insights designed specifically for defense industry leaders who demand
-                  excellence in strategic execution.
+                  Defense-grade AI platform with domain specialization in oncology, defense, legal, and enterprise.
+                  Real-time multi-modal interaction with military-standard security.
                 </p>
               </div>
 
@@ -55,32 +55,32 @@ export default function ExecutiveLandingPage() {
                 <ExecutiveFeatureCard
                   icon={<Shield className="w-8 h-8 text-gold-400" />}
                   title="Defense-Grade Security"
-                  description="Military-standard encryption and compliance frameworks ensuring your strategic data remains protected at the highest levels."
+                  description="Military-standard encryption with HIPAA, SOC2, and GDPR compliance modes. Role-based access control and audit logging."
                 />
                 <ExecutiveFeatureCard
                   icon={<Target className="w-8 h-8 text-blue-400" />}
-                  title="Strategic Intelligence"
-                  description="AI-powered market analysis and competitive intelligence tailored for defense contractors and government relations."
+                  title="Domain Specialization"
+                  description="Expert-tuned AI models for oncology, defense, legal, and enterprise verticals with superior accuracy and compliance."
                 />
                 <ExecutiveFeatureCard
                   icon={<Users className="w-8 h-8 text-green-400" />}
-                  title="Leadership Development"
-                  description="Executive coaching modules and team optimization tools designed for high-stakes defense industry leadership."
+                  title="Role-Based AI Copilots"
+                  description="Tailored AI assistants for clinicians, attorneys, analysts, patients, and enterprise users with specialized vocabularies."
                 />
                 <ExecutiveFeatureCard
-                  icon={<TrendingUp className="w-8 h-8 text-purple-400" />}
-                  title="Performance Analytics"
-                  description="Real-time KPI tracking and predictive modeling for contract performance and organizational efficiency."
+                  icon={<Brain className="w-8 h-8 text-purple-400" />}
+                  title="Vector Memory & RAG"
+                  description="Encrypted vector database for long-term knowledge retention and retrieval-augmented generation with fast, low-latency search."
                 />
                 <ExecutiveFeatureCard
-                  icon={<Award className="w-8 h-8 text-gold-400" />}
-                  title="Compliance Management"
-                  description="Automated compliance tracking for DFARS, ITAR, and other critical defense industry regulations."
+                  icon={<Video className="w-8 h-8 text-red-400" />}
+                  title="Real-Time Multi-Modal"
+                  description="WebRTC video conferencing with AI transcription, analysis, and real-time collaboration features."
                 />
                 <ExecutiveFeatureCard
-                  icon={<ArrowRight className="w-8 h-8 text-red-400" />}
-                  title="Strategic Execution"
-                  description="Project management and strategic initiative tracking with defense industry best practices integration."
+                  icon={<FileText className="w-8 h-8 text-orange-400" />}
+                  title="Secure Document Ingestion"
+                  description="Permission-tagged document processing with Epic FHIR, Redox integration, and enterprise connectors."
                 />
               </div>
             </div>

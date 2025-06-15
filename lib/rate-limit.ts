@@ -50,4 +50,5 @@ class MockRateLimit {
   }
 }
 
-export const ratelimit = new MockRateLimit()
+export const rateLimit = new MockRateLimit()
+export const ratelimit = rateLimit // Keep backward compatibility
