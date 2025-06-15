@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, Shield } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { ModeToggle } from "@/components/mode-toggle"
 
 const navigationItems = [
   { title: "Platform", href: "/dashboard" },
@@ -67,6 +68,7 @@ export function MainNav() {
             </Link>
           </div>
           <nav className="flex items-center">
+            <ModeToggle />
             <Button asChild size="sm" className="bg-gold-500 hover:bg-gold-600 text-navy-900">
               <Link href="/dashboard">
                 <Shield className="mr-2 h-4 w-4" />
