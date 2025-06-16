@@ -5,9 +5,9 @@ import { useParams } from "next/navigation"
 import { Users, FileText, Video, Brain, Settings } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { CopilotChat } from "@/components/copilot-chat"
 import { ComplianceStatus } from "@/components/compliance-status"
 import { RoleNavigation } from "@/components/role-navigation"
+import { AdvancedCopilot } from "@/components/ai/advanced-copilot"
 
 const roleConfigs = {
   clinician: {
@@ -168,7 +168,7 @@ export default function RoleDashboard() {
 
               {/* Right Column - AI Copilot */}
               <div className="space-y-6">
-                <CopilotChat role={role} />
+                <AdvancedCopilot role={role} complianceMode={["HIPAA", "SOC2"]} userId="demo-user" />
               </div>
             </div>
           </main>
