@@ -6,13 +6,13 @@ import { Shield, Target, Users, Brain, Video, FileText } from "lucide-react"
 import { BusinessAssistant } from "@/components/3d-assistant/business-assistant"
 import { cn } from "@/lib/utils"
 import { Suspense } from "react"
-import { HeroSection } from "@/components/sections/hero-section"
 import { DemoSection } from "@/components/sections/demo-section"
 import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { PricingSection } from "@/components/sections/pricing-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { Navbar } from "@/components/layout/navbar"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
+import EnterpriseAvatar from "@/components/enterprise-avatar"
 
 export default function ExecutiveLandingPage() {
   const [showContent, setShowContent] = useState(false)
@@ -28,8 +28,10 @@ export default function ExecutiveLandingPage() {
       <Navbar />
 
       <main className="relative w-full">
-        {/* Hero Section */}
-        <HeroSection />
+        {/* Enterprise Avatar Section */}
+        <section className="min-h-screen flex items-center justify-center py-20">
+          <EnterpriseAvatar />
+        </section>
 
         {/* Features Section */}
         <Suspense fallback={<LoadingSpinner />}>
