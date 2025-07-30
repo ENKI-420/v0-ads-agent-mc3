@@ -1,141 +1,99 @@
 "use client"
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Brain, MessageSquare, FileText, Video, Activity, ArrowRight } from "lucide-react"
+import { ArrowRight, MessageSquare, Users, BarChart, FileText, Video } from "lucide-react"
 import Link from "next/link"
+import { motion } from "framer-motion"
 
 export function DemoSection() {
-  const [activeTab, setActiveTab] = useState("ai-chat")
-
-  const demoFeatures = [
+  const features = [
     {
-      id: "ai-chat",
-      title: "AI Chat Assistant",
-      icon: Brain,
-      description: "Experience multi-agent AI orchestration with real-time responses",
-      preview: "Try asking: 'Analyze this medical report for key findings'",
-    },
-    {
-      id: "collaboration",
-      title: "Real-time Collaboration",
       icon: MessageSquare,
-      description: "See live collaboration features with WebRTC integration",
-      preview: "Join a simulated team meeting with AI copilots",
+      title: "AI Chat Assistant",
+      description: "Interact with Aiden, your intelligent business co-pilot for instant insights.",
+      link: "/demo?tab=ai-chat",
     },
     {
-      id: "document",
-      title: "Document Analysis",
+      icon: Users,
+      title: "Real-time Collaboration",
+      description: "Seamlessly work together on documents and projects with live updates.",
+      link: "/demo?tab=collaboration",
+    },
+    {
+      icon: BarChart,
+      title: "System Metrics & Insights",
+      description: "Monitor performance and gain actionable insights from your operational data.",
+      link: "/demo?tab=metrics",
+    },
+    {
       icon: FileText,
-      description: "Upload and analyze documents with AI-powered insights",
-      preview: "Upload a PDF and get instant AI analysis",
+      title: "Document Analysis",
+      description: "Intelligently analyze documents for summaries, key entities, and sentiment.",
+      link: "/demo?tab=document-analysis",
     },
     {
-      id: "video",
-      title: "Video Conference",
       icon: Video,
-      description: "HIPAA-compliant video calls with AI transcription",
-      preview: "Experience secure video with live AI assistance",
+      title: "Video Conferencing",
+      description: "Smarter meetings with AI-powered transcription and automated summaries.",
+      link: "/demo?tab=video-conference",
     },
   ]
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  }
+
   return (
-    <section className="py-24 bg-muted/30">
-      <div className="container px-4 md:px-6">
-        <div className="text-center mb-16">
-          <Badge variant="outline" className="mb-4">
-            Interactive Demo
-          </Badge>
-          <h2 className="text-3xl md:text-5xl font-bold mb-6">Experience AI in Action</h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Don't just read about our capabilities—experience them firsthand. Our interactive demo showcases real AI
-            features you can try right now.
-          </p>
-        </div>
+    <section className="py-24 bg-background">
+      <div className="container px-4 md:px-6 text-center">
+        <h2 className="text-3xl md:text-5xl font-bold mb-6">Explore Our Interactive Demo</h2>
+        <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-12">
+          Dive into the core functionalities of AGENT-M3c and see how AI transforms everyday business tasks.
+        </p>
 
-        <div className="max-w-6xl mx-auto">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 mb-8">
-              {demoFeatures.map((feature) => (
-                <TabsTrigger key={feature.id} value={feature.id} className="flex items-center gap-2">
-                  <feature.icon className="h-4 w-4" />
-                  <span className="hidden sm:inline">{feature.title}</span>
-                </TabsTrigger>
-              ))}
-            </TabsList>
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+        >
+          {features.map((feature, index) => (
+            <motion.div
+              key={index}
+              className="flex flex-col items-center p-6 bg-muted rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
+              variants={itemVariants}
+            >
+              <feature.icon className="h-12 w-12 text-primary mb-4" />
+              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+              <p className="text-muted-foreground text-center mb-4">{feature.description}</p>
+              <Link href={feature.link}>
+                <Button variant="link" className="group">
+                  Try Demo
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </Link>
+            </motion.div>
+          ))}
+        </motion.div>
 
-            {demoFeatures.map((feature) => (
-              <TabsContent key={feature.id} value={feature.id}>
-                <Card className="overflow-hidden">
-                  <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-primary/10">
-                          <feature.icon className="h-6 w-6 text-primary" />
-                        </div>
-                        <div>
-                          <CardTitle className="text-2xl">{feature.title}</CardTitle>
-                          <p className="text-muted-foreground mt-1">{feature.description}</p>
-                        </div>
-                      </div>
-                      <Badge variant="secondary" className="bg-green-500/10 text-green-500">
-                        Live Demo
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-8">
-                    <div className="grid md:grid-cols-2 gap-8 items-center">
-                      <div>
-                        <h3 className="text-xl font-semibold mb-4">Try it yourself:</h3>
-                        <p className="text-muted-foreground mb-6">{feature.preview}</p>
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Activity className="h-4 w-4 text-green-500" />
-                            Real-time processing
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Brain className="h-4 w-4 text-blue-500" />
-                            AI-powered insights
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <MessageSquare className="h-4 w-4 text-purple-500" />
-                            Interactive responses
-                          </div>
-                        </div>
-                      </div>
-                      <div className="bg-background/50 rounded-lg p-6 border-2 border-dashed border-border">
-                        <div className="text-center">
-                          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-                            <feature.icon className="h-8 w-8 text-primary" />
-                          </div>
-                          <p className="text-muted-foreground mb-4">Interactive {feature.title.toLowerCase()} demo</p>
-                          <Link href="/demo">
-                            <Button className="group">
-                              Launch Demo
-                              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                            </Button>
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            ))}
-          </Tabs>
-        </div>
-
-        <div className="text-center mt-12">
-          <Link href="/demo">
-            <Button size="lg" className="px-8 py-4 text-lg group">
-              Experience Full Demo
-              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </Button>
-          </Link>
-        </div>
+        <Link href="/demo">
+          <Button size="lg" className="px-8 py-4 text-lg group">
+            View All Demos
+            <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+          </Button>
+        </Link>
       </div>
     </section>
   )

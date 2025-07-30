@@ -1,51 +1,32 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { ratelimit } from "@/lib/rate-limit"
+import { NextResponse } from "next/server"
 import { logger } from "@/lib/logger"
+import { rateLimit } from "@/lib/rate-limit"
 
-// Mock AI response for demo purposes
-async function generateMockAIResponse(message: string, context?: string): Promise<string> {
-  // Simulate AI processing time
-  await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 2000))
+export async function POST(req: Request) {
+  logger.info("Received request for /api/ai/chat")
 
-  const responses = [
-    `I understand you're asking about "${message}". As AGENT-M3c, I can help you analyze this request and provide insights based on our platform's capabilities.`,
-    `That's an interesting question about "${message}". Our AI-powered collaboration platform can assist with document analysis, real-time collaboration, and strategic insights.`,
-    `Based on your query "${message}", I can provide several recommendations. Our platform excels at processing complex information and providing actionable insights.`,
-    `Thank you for asking about "${message}". Our multi-agent AI system can help break down complex problems and provide comprehensive solutions.`,
-    `I see you're interested in "${message}". Our platform's AI capabilities include real-time analysis, collaboration tools, and enterprise-grade security features.`,
-  ]
+  // Apply rate limiting
+  const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "127.0.0.1"
+  const limit = rateLimit(ip)
 
-  return responses[Math.floor(Math.random() * responses.length)]
-}
+  if (!limit.success) {
+    logger.warn(`Rate limit exceeded for IP: ${ip}`)
+    return new NextResponse("Too Many Requests", { status: 429 })
+  }
 
-export async function POST(request: NextRequest) {
   try {
-    // Rate limiting
-    const ip = request.ip ?? "127.0.0.1"
-    const { success } = await ratelimit.limit(ip)
+    const { message } = await req.json()
+    logger.info(`Processing chat message: "${message}"`)
 
-    if (!success) {
-      return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 })
-    }
+    // Simulate AI response
+    await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate network delay
 
-    const { message, context } = await request.json()
+    const aiResponse = `Echo: ${message}. I'm an AI chat assistant. How can I help you further?`
+    logger.info(`Sending AI response: "${aiResponse}"`)
 
-    if (!message) {
-      return NextResponse.json({ error: "Message is required" }, { status: 400 })
-    }
-
-    // Generate AI response (using mock for demo)
-    const response = await generateMockAIResponse(message, context)
-
-    logger.info("AI chat response generated", {
-      messageLength: message.length,
-      responseLength: response.length,
-      context,
-    })
-
-    return NextResponse.json({ response })
+    return NextResponse.json({ response: aiResponse })
   } catch (error) {
-    logger.error("AI chat error", { error })
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    logger.error("Error in /api/ai/chat:", error)
+    return new NextResponse("Internal Server Error", { status: 500 })
   }
 }

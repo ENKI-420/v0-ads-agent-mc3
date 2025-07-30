@@ -1,80 +1,82 @@
 "use client"
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Star, Quote } from "lucide-react"
+import { Card, CardContent, CardDescription } from "@/components/ui/card"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Star } from "lucide-react"
 
 export function TestimonialsSection() {
   const testimonials = [
     {
-      name: "Dr. Sarah Chen",
-      role: "Chief Medical Officer",
-      company: "MedTech Solutions",
-      content:
-        "AGENT-M3c has revolutionized our medical documentation process. The AI-powered analysis saves us hours daily.",
+      name: "Sarah Chen",
+      title: "CEO, InnovateCorp",
+      avatar: "/placeholder-user.jpg",
       rating: 5,
-      avatar: "/placeholder.svg?height=60&width=60",
+      feedback:
+        "AGENT-M3c has revolutionized our team's productivity. The AI assistant is incredibly intuitive, and the real-time collaboration features have streamlined our workflows beyond expectation. A truly indispensable tool!",
     },
     {
-      name: "James Rodriguez",
-      role: "Legal Director",
-      company: "Corporate Law Firm",
-      content: "The real-time collaboration features are game-changing for our legal team's document review process.",
+      name: "David Lee",
+      title: "Head of Product, TechSolutions",
+      avatar: "/placeholder-user.jpg",
       rating: 5,
-      avatar: "/placeholder.svg?height=60&width=60",
+      feedback:
+        "The insights from AGENT-M3c's system metrics are invaluable. We've optimized our resource allocation and identified bottlenecks we never knew existed. This platform is a game-changer for data-driven decisions.",
     },
     {
-      name: "Colonel Mike Thompson",
-      role: "Defense Contractor",
-      company: "Strategic Defense Corp",
-      content:
-        "Enterprise-grade security with cutting-edge AI capabilities. Exactly what we needed for classified projects.",
+      name: "Maria Garcia",
+      title: "Marketing Director, GlobalBrands",
+      avatar: "/placeholder-user.jpg",
+      rating: 4,
+      feedback:
+        "Our marketing campaigns have seen a significant boost thanks to AGENT-M3c's document analysis. It helps us quickly distill key information from market research, saving countless hours. Highly recommended!",
+    },
+    {
+      name: "Alex Johnson",
+      title: "Operations Manager, FutureWorks",
+      avatar: "/placeholder-user.jpg",
       rating: 5,
-      avatar: "/placeholder.svg?height=60&width=60",
+      feedback:
+        "The AI-enhanced video conferencing is a revelation. Automated summaries mean we never miss an action item, and the transcription feature is incredibly accurate. Meetings are now more efficient and productive.",
     },
   ]
 
   return (
-    <section className="py-24 bg-muted/30">
-      <div className="container px-4 md:px-6">
-        <div className="text-center mb-16">
-          <Badge variant="outline" className="mb-4">
-            Customer Success
-          </Badge>
-          <h2 className="text-3xl md:text-5xl font-bold mb-6">Trusted by Industry Leaders</h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            See how organizations across healthcare, legal, and defense sectors are transforming their workflows.
-          </p>
-        </div>
+    <section className="py-24 bg-muted">
+      <div className="container px-4 md:px-6 text-center">
+        <h2 className="text-3xl md:text-5xl font-bold mb-6">What Our Clients Say</h2>
+        <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-12">
+          Hear from business leaders who have transformed their operations with AGENT-M3c.
+        </p>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {testimonials.map((testimonial, index) => (
-            <Card key={index} className="relative">
-              <CardContent className="p-6">
-                <Quote className="h-8 w-8 text-primary/20 mb-4" />
-                <p className="text-muted-foreground mb-6 leading-relaxed">"{testimonial.content}"</p>
-
-                <div className="flex items-center gap-1 mb-4">
-                  {Array.from({ length: testimonial.rating }).map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+            <Card
+              key={index}
+              className="flex flex-col items-center text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300"
+            >
+              <CardContent className="flex flex-col items-center p-0">
+                <Avatar className="w-20 h-20 mb-4 border-4 border-primary">
+                  <AvatarImage src={testimonial.avatar || "/placeholder.svg"} alt={testimonial.name} />
+                  <AvatarFallback>
+                    {testimonial.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex mb-2">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-5 w-5 ${
+                        i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground"
+                      }`}
+                    />
                   ))}
                 </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
-                    <span className="font-semibold text-sm">
-                      {testimonial.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="font-semibold">{testimonial.name}</p>
-                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
-                    <p className="text-xs text-muted-foreground">{testimonial.company}</p>
-                  </div>
-                </div>
+                <p className="text-lg font-semibold mb-2">{testimonial.name}</p>
+                <p className="text-sm text-muted-foreground mb-4">{testimonial.title}</p>
+                <CardDescription className="text-base italic">"{testimonial.feedback}"</CardDescription>
               </CardContent>
             </Card>
           ))}

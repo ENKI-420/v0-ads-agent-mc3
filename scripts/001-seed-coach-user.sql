@@ -73,5 +73,75 @@ END $$;
 --   else console.log('Custom claim "coach" set for connect@lukebonney.com:', data);
 -- }
 -- setRole();
---
--- You would run this Node.js script once.
+
+-- Create the 'users' table if it doesn't exist
+CREATE TABLE IF NOT EXISTS users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Create the 'user_profiles' table if it doesn't exist
+CREATE TABLE IF NOT EXISTS user_profiles (
+    user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    name VARCHAR(255),
+    preferences JSONB DEFAULT '{}'::jsonb,
+    goals JSONB DEFAULT '[]'::jsonb,
+    recent_interactions JSONB DEFAULT '[]'::jsonb,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Insert a mock coach user if they don't already exist
+INSERT INTO users (email, password_hash)
+VALUES ('coach@example.com', 'mock_hashed_password_123') -- Replace with a real hashed password in production
+ON CONFLICT (email) DO NOTHING;
+
+-- Insert a mock user profile for the coach
+INSERT INTO user_profiles (user_id, name, preferences, goals, recent_interactions)
+SELECT
+    id,
+    'Coach Aiden',
+    '{"theme": "dark", "notifications": true}'::jsonb,
+    '[{"id": "g1", "description": "Increase client engagement by 20%", "status": "in-progress"}, {"id": "g2", "description": "Develop new coaching module", "status": "not-started"}]'::jsonb,
+    '[]'::jsonb
+FROM users
+WHERE email = 'coach@example.com'
+ON CONFLICT (user_id) DO NOTHING;
+
+-- Optional: Add an index for faster lookups on email
+CREATE INDEX IF NOT EXISTS idx_users_email ON users (email);
+
+-- Create a table for coach users if it doesn't exist
+CREATE TABLE IF NOT EXISTS coach_users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    first_name TEXT,
+    last_name TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Insert a mock coach user if one doesn't already exist
+INSERT INTO coach_users (email, password_hash, first_name, last_name)
+VALUES (
+    'coach@example.com',
+    -- In a real application, this would be a securely hashed password.
+    -- For demonstration, using a plain text placeholder.
+    'hashed_password_123',
+    'Aiden',
+    'Coach'
+)
+ON CONFLICT (email) DO NOTHING;
+
+-- You can add more mock users or data as needed
+-- INSERT INTO coach_users (email, password_hash, first_name, last_name)
+-- VALUES (
+--     'another.coach@example.com',
+--     'another_hashed_password',
+--     'Jane',
+--     'Doe'
+-- )
+-- ON CONFLICT (email) DO NOTHING;

@@ -1,34 +1,35 @@
 import { NextResponse } from "next/server"
 import { logger } from "@/lib/logger"
+import { rateLimit } from "@/lib/rate-limit"
 
-export async function GET() {
+export async function GET(req: Request) {
+  logger.info("Received request for /api/demo/metrics")
+
+  // Apply rate limiting
+  const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "127.0.0.1"
+  const limit = rateLimit(ip)
+
+  if (!limit.success) {
+    logger.warn(`Rate limit exceeded for IP: ${ip}`)
+    return new NextResponse("Too Many Requests", { status: 429 })
+  }
+
   try {
-    // Simulate real-time metrics
+    // Simulate fetching real-time system metrics
+    await new Promise((resolve) => setTimeout(resolve, 500)) // Simulate network delay
+
     const metrics = {
+      cpuUsage: Number.parseFloat((Math.random() * (90 - 20) + 20).toFixed(2)), // 20-90%
+      memoryUsage: Number.parseFloat((Math.random() * (80 - 30) + 30).toFixed(2)), // 30-80%
+      networkLatency: Number.parseFloat((Math.random() * (150 - 10) + 10).toFixed(2)), // 10-150ms
+      activeUsers: Math.floor(Math.random() * (500 - 50) + 50), // 50-500 users
       timestamp: new Date().toISOString(),
-      system: {
-        cpu: Math.floor(Math.random() * 30) + 40, // 40-70%
-        memory: Math.floor(Math.random() * 20) + 60, // 60-80%
-        network: Math.floor(Math.random() * 15) + 80, // 80-95%
-        storage: Math.floor(Math.random() * 10) + 70, // 70-80%
-      },
-      ai: {
-        activeAgents: Math.floor(Math.random() * 5) + 3, // 3-8
-        requestsPerMinute: Math.floor(Math.random() * 100) + 150, // 150-250
-        averageResponseTime: Math.floor(Math.random() * 200) + 300, // 300-500ms
-        accuracy: 95 + Math.random() * 4, // 95-99%
-      },
-      collaboration: {
-        activeUsers: Math.floor(Math.random() * 50) + 100, // 100-150
-        activeRooms: Math.floor(Math.random() * 20) + 25, // 25-45
-        messagesPerMinute: Math.floor(Math.random() * 200) + 300, // 300-500
-        uptime: 99.9,
-      },
     }
 
+    logger.info("Sending system metrics:", metrics)
     return NextResponse.json(metrics)
   } catch (error) {
-    logger.error("Metrics API error", { error })
-    return NextResponse.json({ error: "Failed to fetch metrics" }, { status: 500 })
+    logger.error("Error in /api/demo/metrics:", error)
+    return new NextResponse("Internal Server Error", { status: 500 })
   }
 }

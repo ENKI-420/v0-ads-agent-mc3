@@ -1,52 +1,45 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import { logger } from "@/lib/logger"
+import { rateLimit } from "@/lib/rate-limit"
 
-// Simulate real-time collaboration events
-const collaborationEvents = [
-  { type: "user_joined", user: "Dr. Sarah Chen", room: "Medical Review", timestamp: new Date() },
-  { type: "document_shared", user: "Legal Team", document: "Contract_v2.pdf", timestamp: new Date() },
-  {
-    type: "ai_suggestion",
-    agent: "SynthAgent",
-    suggestion: "Consider adding compliance clause",
-    timestamp: new Date(),
-  },
-  { type: "message_sent", user: "Project Manager", message: "Let's review the timeline", timestamp: new Date() },
-]
+export async function POST(req: Request) {
+  logger.info("Received request for /api/demo/collaboration")
 
-export async function GET() {
+  // Apply rate limiting
+  const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "127.0.0.1"
+  const limit = rateLimit(ip)
+
+  if (!limit.success) {
+    logger.warn(`Rate limit exceeded for IP: ${ip}`)
+    return new NextResponse("Too Many Requests", { status: 429 })
+  }
+
   try {
-    // Simulate real-time events
-    const randomEvent = collaborationEvents[Math.floor(Math.random() * collaborationEvents.length)]
-    const event = {
-      ...randomEvent,
-      id: Math.random().toString(36).substr(2, 9),
-      timestamp: new Date(),
+    const { action, data } = await req.json()
+    logger.info(`Processing collaboration action: "${action}" with data:`, data)
+
+    // Simulate real-time collaboration update
+    await new Promise((resolve) => setTimeout(resolve, 300)) // Simulate network delay
+
+    let responseMessage: string
+    switch (action) {
+      case "document_edit":
+        responseMessage = `User ${data.userId} edited document "${data.documentId}" at line ${data.lineNumber}.`
+        break
+      case "comment_add":
+        responseMessage = `User ${data.userId} added a comment: "${data.comment}".`
+        break
+      case "task_assign":
+        responseMessage = `User ${data.userId} assigned task "${data.taskId}" to ${data.assigneeId}.`
+        break
+      default:
+        responseMessage = `Unknown collaboration action: ${action}.`
     }
 
-    return NextResponse.json({ event })
+    logger.info(`Sending collaboration response: "${responseMessage}"`)
+    return NextResponse.json({ status: "success", message: responseMessage })
   } catch (error) {
-    logger.error("Collaboration API error", { error })
-    return NextResponse.json({ error: "Failed to fetch collaboration data" }, { status: 500 })
-  }
-}
-
-export async function POST(request: NextRequest) {
-  try {
-    const { action, data } = await request.json()
-
-    // Simulate processing collaboration action
-    await new Promise((resolve) => setTimeout(resolve, 500))
-
-    logger.info("Collaboration action processed", { action, data })
-
-    return NextResponse.json({
-      success: true,
-      message: `${action} completed successfully`,
-      timestamp: new Date().toISOString(),
-    })
-  } catch (error) {
-    logger.error("Collaboration action error", { error })
-    return NextResponse.json({ error: "Failed to process action" }, { status: 500 })
+    logger.error("Error in /api/demo/collaboration:", error)
+    return new NextResponse("Internal Server Error", { status: 500 })
   }
 }

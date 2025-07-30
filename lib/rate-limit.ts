@@ -1,54 +1,47 @@
-// Mock rate limiting for demo purposes
-// In production, you would use a real rate limiting service like Upstash Redis
+import { LRUCache } from "lru-cache"
+import { logger } from "./logger"
 
 interface RateLimitResult {
   success: boolean
   limit: number
   remaining: number
-  reset: Date
+  reset: number
 }
 
-class MockRateLimit {
-  private requests: Map<string, { count: number; resetTime: number }> = new Map()
-  private limit = 10
-  private windowMs = 10000 // 10 seconds
+const rateLimitCache = new LRUCache<string, { count: number; lastReset: number }>({
+  max: 500, // Max number of IP addresses to store
+  ttl: 60 * 1000, // 1 minute
+})
 
-  async limit(identifier: string): Promise<RateLimitResult> {
-    const now = Date.now()
-    const key = identifier
-    const current = this.requests.get(key)
+const MAX_REQUESTS_PER_MINUTE = 10
 
-    if (!current || now > current.resetTime) {
-      // Reset window
-      this.requests.set(key, { count: 1, resetTime: now + this.windowMs })
-      return {
-        success: true,
-        limit: this.limit,
-        remaining: this.limit - 1,
-        reset: new Date(now + this.windowMs),
-      }
-    }
+export function rateLimit(ip: string): RateLimitResult {
+  const now = Date.now()
+  let ipData = rateLimitCache.get(ip)
 
-    if (current.count >= this.limit) {
-      return {
-        success: false,
-        limit: this.limit,
-        remaining: 0,
-        reset: new Date(current.resetTime),
-      }
-    }
+  if (!ipData || now - ipData.lastReset > 60 * 1000) {
+    // Reset if data doesn't exist or 1 minute has passed
+    ipData = { count: 0, lastReset: now }
+    rateLimitCache.set(ip, ipData)
+  }
 
-    current.count++
-    this.requests.set(key, current)
+  ipData.count++
 
-    return {
-      success: true,
-      limit: this.limit,
-      remaining: this.limit - current.count,
-      reset: new Date(current.resetTime),
-    }
+  const remaining = MAX_REQUESTS_PER_MINUTE - ipData.count
+  const reset = Math.ceil((ipData.lastReset + 60 * 1000 - now) / 1000)
+
+  const success = remaining >= 0
+
+  if (!success) {
+    logger.warn(`Rate limit exceeded for IP: ${ip}. Requests: ${ipData.count}/${MAX_REQUESTS_PER_MINUTE}`)
+  } else {
+    logger.debug(`Rate limit check for IP: ${ip}. Remaining: ${remaining}`)
+  }
+
+  return {
+    success,
+    limit: MAX_REQUESTS_PER_MINUTE,
+    remaining,
+    reset,
   }
 }
-
-export const rateLimit = new MockRateLimit()
-export const ratelimit = rateLimit // Keep backward compatibility

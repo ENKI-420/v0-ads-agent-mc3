@@ -1,114 +1,90 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Target, PlusCircle, Edit, Trash2 } from "lucide-react"
-import { Progress } from "@/components/ui/progress" // Assuming you have a Progress component
-
-// Mock data
-const goals = [
-  {
-    id: "1",
-    title: "Improve team leadership skills",
-    description: "Focus on delegation, motivation, and conflict resolution.",
-    status: "In Progress",
-    progress: 60,
-    dueDate: "2025-08-31",
-  },
-  {
-    id: "2",
-    title: "Develop Q3 strategic plan",
-    description: "Finalize market analysis, define key objectives, and allocate resources.",
-    status: "In Progress",
-    progress: 30,
-    dueDate: "2025-07-15",
-  },
-  {
-    id: "3",
-    title: "Enhance public speaking confidence",
-    description: "Deliver 3 internal presentations and seek feedback.",
-    status: "Completed",
-    progress: 100,
-    dueDate: "2025-05-30",
-  },
-  {
-    id: "4",
-    title: "Expand professional network in new industry",
-    description: "Attend 2 industry events and connect with 10 new contacts.",
-    status: "Not Started",
-    progress: 0,
-    dueDate: "2025-09-30",
-  },
-]
+import { Progress } from "@/components/ui/progress"
 
 export default function GoalsPage() {
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-serif font-bold flex items-center gap-2">
-          <Target className="h-7 w-7 text-purple-600" /> My Goals
-        </h1>
-        <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-          <PlusCircle className="mr-2 h-4 w-4" /> Add New Goal
-        </Button>
-      </div>
-
-      <div className="grid gap-6">
-        {goals.map((goal) => (
-          <Card key={goal.id} className="shadow-sm">
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle className="text-xl">{goal.title}</CardTitle>
-                  <CardDescription className="mt-1">{goal.description}</CardDescription>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between mb-2">
-                <span
-                  className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                    goal.status === "Completed"
-                      ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
-                      : goal.status === "In Progress"
-                        ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
-                        : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
-                  }`}
-                >
-                  {goal.status}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  Due: {new Date(goal.dueDate).toLocaleDateString()}
-                </span>
-              </div>
-              <Progress
-                value={goal.progress}
-                className="w-full h-2"
-                indicatorClassName={goal.status === "Completed" ? "bg-green-500" : "bg-purple-500"}
-              />
-              <p className="text-xs text-muted-foreground mt-1 text-right">{goal.progress}% complete</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-      {goals.length === 0 && (
-        <Card className="text-center py-12">
+    <div className="grid gap-6 p-4 md:p-6">
+      <h1 className="text-3xl font-bold">Your Goals</h1>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <Card>
+          <CardHeader>
+            <CardTitle>Q3 Revenue Target</CardTitle>
+            <CardDescription>Achieve $10M in recurring revenue by end of Q3.</CardDescription>
+          </CardHeader>
           <CardContent>
-            <Target className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-xl font-semibold mb-2">No Goals Yet</h3>
-            <p className="text-muted-foreground mb-4">Start defining your objectives to track your progress.</p>
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Your First Goal
-            </Button>
+            <div className="flex items-center justify-between text-sm">
+              <span>Progress: 75%</span>
+              <span>$7.5M / $10M</span>
+            </div>
+            <Progress value={75} className="mt-2" />
           </CardContent>
         </Card>
-      )}
+        <Card>
+          <CardHeader>
+            <CardTitle>Customer Satisfaction</CardTitle>
+            <CardDescription>Maintain an NPS score above 60.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between text-sm">
+              <span>Current NPS: 68</span>
+              <span>Target: 60+</span>
+            </div>
+            <Progress value={80} className="mt-2" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Product Launch</CardTitle>
+            <CardDescription>Successfully launch "Project Phoenix" by October 1st.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between text-sm">
+              <span>Status: On Track</span>
+              <span>Deadline: Sep 30</span>
+            </div>
+            <Progress value={90} className="mt-2" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Team Growth</CardTitle>
+            <CardDescription>Hire 5 new engineers for the AI division.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between text-sm">
+              <span>Progress: 60%</span>
+              <span>3 / 5 Hired</span>
+            </div>
+            <Progress value={60} className="mt-2" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Market Expansion</CardTitle>
+            <CardDescription>Enter 2 new international markets by year-end.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between text-sm">
+              <span>Status: In Progress</span>
+              <span>Target: 2 Markets</span>
+            </div>
+            <Progress value={50} className="mt-2" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Operational Efficiency</CardTitle>
+            <CardDescription>Reduce cloud infrastructure costs by 15%.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between text-sm">
+              <span>Progress: 20%</span>
+              <span>Current Savings: 5%</span>
+            </div>
+            <Progress value={20} className="mt-2" />
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

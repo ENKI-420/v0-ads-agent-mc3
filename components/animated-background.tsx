@@ -1,136 +1,200 @@
 "use client"
 
-import type React from "react"
+import { useEffect, useRef } from "react"
+import { motion } from "framer-motion"
+import { cn } from "@/lib/utils"
 
-const ExecutiveAnimatedBackground = () => {
-  return (
-    <div className="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden bg-navy-950">
-      <div className="absolute inset-0 executive-gradient opacity-90"></div>
-
-      {/* Geometric patterns for professional look */}
-      <div className="absolute inset-0">
-        <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
-              <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(234, 179, 8, 0.1)" strokeWidth="1" />
-            </pattern>
-            <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgba(234, 179, 8, 0.1)" />
-              <stop offset="100%" stopColor="rgba(245, 158, 11, 0.05)" />
-            </linearGradient>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-      </div>
-
-      {/* Floating geometric shapes */}
-      <div className="floating-shapes">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <div
-            key={i}
-            className="floating-shape"
-            style={
-              {
-                "--shape-left": `${Math.random() * 100}%`,
-                "--shape-duration": `${15 + Math.random() * 20}s`,
-                "--shape-delay": `${Math.random() * 10}s`,
-                "--shape-size": `${20 + Math.random() * 40}px`,
-                "--shape-opacity": `${0.03 + Math.random() * 0.07}`,
-              } as React.CSSProperties
-            }
-          />
-        ))}
-      </div>
-
-      {/* Subtle light rays */}
-      <div className="light-rays">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div
-            key={i}
-            className="light-ray"
-            style={
-              {
-                "--ray-left": `${20 + i * 20}%`,
-                "--ray-duration": `${8 + Math.random() * 4}s`,
-                "--ray-delay": `${Math.random() * 3}s`,
-              } as React.CSSProperties
-            }
-          />
-        ))}
-      </div>
-
-      <style jsx>{`
-        .floating-shapes {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          pointer-events: none;
-        }
-        .floating-shape {
-          position: absolute;
-          left: var(--shape-left);
-          top: -10%;
-          width: var(--shape-size);
-          height: var(--shape-size);
-          background: linear-gradient(45deg, rgba(234, 179, 8, var(--shape-opacity)), rgba(245, 158, 11, var(--shape-opacity)));
-          border-radius: 4px;
-          opacity: var(--shape-opacity);
-          animation: floatUp var(--shape-duration) var(--shape-delay) linear infinite;
-          transform: rotate(45deg);
-        }
-        .light-rays {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          pointer-events: none;
-        }
-        .light-ray {
-          position: absolute;
-          left: var(--ray-left);
-          top: 0;
-          width: 2px;
-          height: 100%;
-          background: linear-gradient(to bottom, 
-            transparent, 
-            rgba(234, 179, 8, 0.1) 20%, 
-            rgba(234, 179, 8, 0.05) 50%, 
-            transparent 80%
-          );
-          animation: rayPulse var(--ray-duration) var(--ray-delay) ease-in-out infinite;
-        }
-        @keyframes floatUp {
-          0% {
-            transform: translateY(100vh) rotate(45deg) scale(0);
-            opacity: 0;
-          }
-          10% {
-            opacity: var(--shape-opacity);
-            transform: translateY(90vh) rotate(45deg) scale(1);
-          }
-          90% {
-            opacity: var(--shape-opacity);
-            transform: translateY(-10vh) rotate(405deg) scale(1);
-          }
-          100% {
-            opacity: 0;
-            transform: translateY(-20vh) rotate(405deg) scale(0);
-          }
-        }
-        @keyframes rayPulse {
-          0%, 100% {
-            opacity: 0.1;
-          }
-          50% {
-            opacity: 0.3;
-          }
-        }
-      `}</style>
-    </div>
-  )
+interface ExecutiveAnimatedBackgroundProps {
+  className?: string
 }
 
-export default ExecutiveAnimatedBackground
+export function ExecutiveAnimatedBackground({ className }: ExecutiveAnimatedBackgroundProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const animationFrameId = useRef<number | null>(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+
+    let width = window.innerWidth
+    let height = window.innerHeight
+    let particles: Particle[] = []
+    let lightRays: LightRay[] = []
+
+    const resizeCanvas = () => {
+      width = window.innerWidth
+      height = window.innerHeight
+      canvas.width = width
+      canvas.height = height
+      particles = [] // Clear particles on resize
+      lightRays = [] // Clear light rays on resize
+      initParticles()
+      initLightRays()
+    }
+
+    class Particle {
+      x: number
+      y: number
+      radius: number
+      color: string
+      velocity: { x: number; y: number }
+      alpha: number
+
+      constructor(x: number, y: number, radius: number, color: string) {
+        this.x = x
+        this.y = y
+        this.radius = radius
+        this.color = color
+        this.velocity = {
+          x: (Math.random() - 0.5) * 0.5,
+          y: (Math.random() - 0.5) * 0.5,
+        }
+        this.alpha = Math.random() * 0.8 + 0.2
+      }
+
+      draw() {
+        ctx!.save()
+        ctx!.globalAlpha = this.alpha
+        ctx!.beginPath()
+        ctx!.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
+        ctx!.fillStyle = this.color
+        ctx!.fill()
+        ctx!.restore()
+      }
+
+      update() {
+        this.x += this.velocity.x
+        this.y += this.velocity.y
+
+        if (this.x - this.radius < 0 || this.x + this.radius > width) {
+          this.velocity.x = -this.velocity.x
+        }
+        if (this.y - this.radius < 0 || this.y + this.radius > height) {
+          this.velocity.y = -this.velocity.y
+        }
+
+        this.draw()
+      }
+    }
+
+    class LightRay {
+      x: number
+      y: number
+      length: number
+      angle: number
+      speed: number
+      alpha: number
+
+      constructor(x: number, y: number, length: number, angle: number, speed: number) {
+        this.x = x
+        this.y = y
+        this.length = length
+        this.angle = angle
+        this.speed = speed
+        this.alpha = Math.random() * 0.3 + 0.1
+      }
+
+      draw() {
+        ctx!.save()
+        ctx!.globalAlpha = this.alpha
+        ctx!.beginPath()
+        ctx!.moveTo(this.x, this.y)
+        ctx!.lineTo(this.x + Math.cos(this.angle) * this.length, this.y + Math.sin(this.angle) * this.length)
+        ctx!.strokeStyle = "rgba(100, 100, 255, 0.7)" // Blueish light
+        ctx!.lineWidth = 1.5
+        ctx!.stroke()
+        ctx!.restore()
+      }
+
+      update() {
+        this.x += Math.cos(this.angle) * this.speed
+        this.y += Math.sin(this.angle) * this.speed
+
+        // Reset ray if it goes off screen
+        if (
+          this.x < -this.length ||
+          this.x > width + this.length ||
+          this.y < -this.length ||
+          this.y > height + this.length
+        ) {
+          this.x = Math.random() * width
+          this.y = Math.random() * height
+          this.angle = Math.random() * Math.PI * 2
+        }
+        this.draw()
+      }
+    }
+
+    const initParticles = () => {
+      for (let i = 0; i < 50; i++) {
+        const radius = Math.random() * 2 + 0.5
+        const x = Math.random() * (width - radius * 2) + radius
+        const y = Math.random() * (height - radius * 2) + radius
+        particles.push(new Particle(x, y, radius, "rgba(200, 200, 255, 0.8)")) // Light blue/white particles
+      }
+    }
+
+    const initLightRays = () => {
+      for (let i = 0; i < 15; i++) {
+        const x = Math.random() * width
+        const y = Math.random() * height
+        const length = Math.random() * 100 + 50
+        const angle = Math.random() * Math.PI * 2
+        const speed = Math.random() * 0.5 + 0.1
+        lightRays.push(new LightRay(x, y, length, angle, speed))
+      }
+    }
+
+    const animate = () => {
+      ctx!.clearRect(0, 0, width, height)
+      ctx!.fillStyle = "rgba(0, 0, 0, 0.05)" // Subtle dark overlay for trail effect
+      ctx!.fillRect(0, 0, width, height)
+
+      // Draw subtle geometric grid
+      ctx!.strokeStyle = "rgba(50, 50, 100, 0.1)" // Dark blue/purple grid
+      ctx!.lineWidth = 0.5
+      const gridSize = 50
+      for (let x = 0; x < width; x += gridSize) {
+        ctx!.beginPath()
+        ctx!.moveTo(x, 0)
+        ctx!.lineTo(x, height)
+        ctx!.stroke()
+      }
+      for (let y = 0; y < height; y += gridSize) {
+        ctx!.beginPath()
+        ctx!.moveTo(0, y)
+        ctx!.lineTo(width, y)
+        ctx!.stroke()
+      }
+
+      particles.forEach((particle) => particle.update())
+      lightRays.forEach((ray) => ray.update())
+
+      animationFrameId.current = requestAnimationFrame(animate)
+    }
+
+    resizeCanvas()
+    window.addEventListener("resize", resizeCanvas)
+    animationFrameId.current = requestAnimationFrame(animate)
+
+    return () => {
+      window.removeEventListener("resize", resizeCanvas)
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current)
+      }
+    }
+  }, [])
+
+  return (
+    <motion.canvas
+      ref={canvasRef}
+      className={cn("absolute inset-0 w-full h-full z-0", className)}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1.5 }}
+    />
+  )
+}

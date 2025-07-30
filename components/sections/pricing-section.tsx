@@ -1,126 +1,95 @@
-"use client"
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Check, Zap, Shield, Users } from "lucide-react"
+import { Check } from "lucide-react"
 
 export function PricingSection() {
-  const plans = [
+  const pricingPlans = [
     {
       name: "Starter",
-      price: "$99",
+      price: "$29",
       period: "per month",
-      description: "Perfect for small teams getting started with AI collaboration",
-      icon: <Users className="h-6 w-6" />,
       features: [
-        "Up to 10 team members",
-        "Basic AI chat assistant",
-        "5GB document storage",
-        "Standard video conferencing",
-        "Email support",
-        "Basic analytics",
+        "Basic AI Chat Assistant",
+        "Limited Collaboration Tools",
+        "Standard Support",
+        "5GB Storage",
+        "Up to 3 Users",
       ],
-      popular: false,
+      buttonText: "Start Free Trial",
+      highlight: false,
     },
     {
-      name: "Professional",
-      price: "$299",
+      name: "Pro",
+      price: "$99",
       period: "per month",
-      description: "Advanced features for growing organizations",
-      icon: <Zap className="h-6 w-6" />,
       features: [
-        "Up to 50 team members",
-        "Advanced AI orchestration",
-        "50GB document storage",
-        "HD video conferencing",
-        "Priority support",
-        "Advanced analytics",
-        "Custom integrations",
-        "API access",
+        "Advanced AI Assistant",
+        "Real-time Collaboration",
+        "Priority Support",
+        "50GB Storage",
+        "Up to 10 Users",
+        "Basic System Metrics",
       ],
-      popular: true,
+      buttonText: "Get Started",
+      highlight: true,
     },
     {
       name: "Enterprise",
       price: "Custom",
-      period: "contact us",
-      description: "Enterprise-grade security and unlimited scale",
-      icon: <Shield className="h-6 w-6" />,
+      period: "",
       features: [
-        "Unlimited team members",
-        "Multi-agent AI orchestration",
-        "Unlimited storage",
-        "4K video conferencing",
-        "24/7 dedicated support",
-        "Custom analytics",
-        "White-label options",
-        "On-premise deployment",
-        "SOC 2 compliance",
-        "HIPAA compliance",
+        "Full AI Orchestration",
+        "Dedicated Support Manager",
+        "Unlimited Storage",
+        "Unlimited Users",
+        "Advanced Analytics & Reporting",
+        "Custom Integrations",
       ],
-      popular: false,
+      buttonText: "Contact Sales",
+      highlight: false,
     },
   ]
 
   return (
-    <section className="py-24">
-      <div className="container px-4 md:px-6">
-        <div className="text-center mb-16">
-          <Badge variant="outline" className="mb-4">
-            Pricing Plans
-          </Badge>
-          <h2 className="text-3xl md:text-5xl font-bold mb-6">Choose Your Plan</h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Flexible pricing options designed to scale with your organization's needs.
-          </p>
-        </div>
+    <section className="py-24 bg-background">
+      <div className="container px-4 md:px-6 text-center">
+        <h2 className="text-3xl md:text-5xl font-bold mb-6">Flexible Pricing for Every Business</h2>
+        <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-12">
+          Choose the plan that best fits your team's needs and scale as you grow.
+        </p>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {plans.map((plan, index) => (
-            <Card key={index} className={`relative ${plan.popular ? "border-primary shadow-lg scale-105" : ""}`}>
-              {plan.popular && (
-                <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary">Most Popular</Badge>
-              )}
-
-              <CardHeader className="text-center pb-8">
-                <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                  {plan.icon}
-                </div>
-                <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">{plan.price}</span>
-                  <span className="text-muted-foreground ml-2">/{plan.period}</span>
-                </div>
-                <p className="text-muted-foreground mt-2">{plan.description}</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {pricingPlans.map((plan, index) => (
+            <Card
+              key={index}
+              className={`flex flex-col ${
+                plan.highlight ? "border-2 border-primary shadow-lg" : "border border-border"
+              }`}
+            >
+              <CardHeader className="text-center pb-4">
+                <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+                <CardDescription className="text-4xl font-extrabold mt-2">
+                  {plan.price}
+                  {plan.period && <span className="text-lg font-medium text-muted-foreground"> {plan.period}</span>}
+                </CardDescription>
               </CardHeader>
-
-              <CardContent className="space-y-6">
-                <ul className="space-y-3">
-                  {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
+              <CardContent className="flex-1 px-6 py-4">
+                <ul className="space-y-3 text-left">
+                  {plan.features.map((feature, i) => (
+                    <li key={i} className="flex items-center text-muted-foreground">
+                      <Check className="mr-2 h-5 w-5 text-primary" />
+                      {feature}
                     </li>
                   ))}
                 </ul>
-
-                <Button
-                  className={`w-full ${plan.popular ? "bg-primary" : ""}`}
-                  variant={plan.popular ? "default" : "outline"}
-                >
-                  {plan.name === "Enterprise" ? "Contact Sales" : "Get Started"}
-                </Button>
               </CardContent>
+              <CardFooter className="p-6 pt-0">
+                <Button className="w-full" variant={plan.highlight ? "default" : "outline"}>
+                  {plan.buttonText}
+                </Button>
+              </CardFooter>
             </Card>
           ))}
-        </div>
-
-        <div className="text-center mt-12">
-          <p className="text-muted-foreground mb-4">
-            All plans include 14-day free trial • No setup fees • Cancel anytime
-          </p>
-          <Button variant="link">View detailed feature comparison →</Button>
         </div>
       </div>
     </section>

@@ -1,142 +1,344 @@
+"use client"
+
+import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Activity, Target, MessageSquare, CalendarDays, FileText, Zap, BookOpen } from "lucide-react"
-import Link from "next/link"
+import { Progress } from "@/components/ui/progress"
+import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  BarChart3,
+  TrendingUp,
+  Users,
+  Shield,
+  Target,
+  FileText,
+  Settings,
+  MessageSquare,
+  Bell,
+  Search,
+  Filter,
+} from "lucide-react"
+import { useAidenStore } from "@/store/aidenStore"
+import { AidenAssistant } from "@/components/aiden-assistant/AidenAssistant"
 
 export default function DashboardPage() {
-  // Mock data - replace with actual data fetching
-  const user = { name: "Alex Chen", role: "Executive Client" }
-  const upcomingSession = { date: "June 15, 2025", time: "2:00 PM PST", topic: "Strategic Planning Q3" }
-  const activeGoals = [
-    { id: "1", title: "Improve team leadership skills", progress: 60 },
-    { id: "2", title: "Develop Q3 strategic plan", progress: 30 },
-    { id: "3", title: "Enhance public speaking confidence", progress: 75 },
+  const { setVisible } = useAidenStore()
+  const [activeTab, setActiveTab] = useState("overview")
+
+  const handleAskAiden = (context: string) => {
+    setVisible(true)
+    // You could also pre-populate a message or context here
+  }
+
+  const metrics = [
+    {
+      title: "Strategic Objectives",
+      value: "12/15",
+      change: "+8%",
+      icon: Target,
+      color: "text-blue-600",
+    },
+    {
+      title: "Operational Efficiency",
+      value: "94%",
+      change: "+12%",
+      icon: TrendingUp,
+      color: "text-green-600",
+    },
+    {
+      title: "Team Performance",
+      value: "87%",
+      change: "+5%",
+      icon: Users,
+      color: "text-purple-600",
+    },
+    {
+      title: "Security Score",
+      value: "98%",
+      change: "+2%",
+      icon: Shield,
+      color: "text-red-600",
+    },
   ]
-  const recentActivity = [
-    { id: "1", type: "Session Summary", title: "Completed: Q2 Review & Goal Setting", date: "June 1, 2025" },
-    { id: "2", type: "Resource Added", title: "New: 'Effective Delegation' Workbook", date: "June 3, 2025" },
-    { id: "3", type: "Goal Update", title: "Progress on 'Team Leadership'", date: "June 5, 2025" },
+
+  const recentActivities = [
+    {
+      id: 1,
+      title: "Q4 Strategic Review Completed",
+      description: "All department heads have submitted their quarterly assessments",
+      time: "2 hours ago",
+      type: "success",
+    },
+    {
+      id: 2,
+      title: "New Threat Assessment Available",
+      description: "Updated cybersecurity threat landscape analysis",
+      time: "4 hours ago",
+      type: "warning",
+    },
+    {
+      id: 3,
+      title: "Team Meeting Scheduled",
+      description: "Executive leadership sync for next week",
+      time: "6 hours ago",
+      type: "info",
+    },
+  ]
+
+  const upcomingTasks = [
+    {
+      id: 1,
+      title: "Review Budget Proposals",
+      deadline: "Today, 3:00 PM",
+      priority: "high",
+    },
+    {
+      id: 2,
+      title: "Strategic Planning Session",
+      deadline: "Tomorrow, 10:00 AM",
+      priority: "high",
+    },
+    {
+      id: 3,
+      title: "Department Performance Review",
+      deadline: "Dec 15, 2024",
+      priority: "medium",
+    },
   ]
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="flex-1 space-y-6 p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-serif font-bold">Welcome back, {user.name.split(" ")[0]}!</h1>
-          <p className="text-gray-500">Here’s your executive coaching overview.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Executive Dashboard</h1>
+          <p className="text-muted-foreground">Welcome back! Here's your strategic overview for today.</p>
         </div>
-        <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
-          <Link href="/dashboard/sessions/new">
-            <CalendarDays className="mr-2 h-4 w-4" /> Schedule Session
-          </Link>
-        </Button>
+        <div className="flex items-center space-x-2">
+          <Button variant="outline" size="sm">
+            <Search className="h-4 w-4 mr-2" />
+            Search
+          </Button>
+          <Button variant="outline" size="sm">
+            <Filter className="h-4 w-4 mr-2" />
+            Filter
+          </Button>
+          <Button variant="outline" size="sm">
+            <Bell className="h-4 w-4 mr-2" />
+            Notifications
+          </Button>
+        </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Upcoming Session */}
-        <Card className="shadow-md border border-gray-200">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium uppercase tracking-wide">Upcoming Session</CardTitle>
-            <CalendarDays className="h-4 w-4 text-gray-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl font-semibold">{upcomingSession.date}</div>
-            <p className="text-xs text-gray-500 mt-1">
-              {upcomingSession.time} — {upcomingSession.topic}
-            </p>
-            <Button variant="outline" size="sm" className="mt-3 border-gray-300">
-              View Details
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Active Goals */}
-        <Card className="shadow-md border border-gray-200">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium uppercase tracking-wide">Active Goals</CardTitle>
-            <Target className="h-4 w-4 text-gray-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl font-semibold">{activeGoals.length}</div>
-            <p className="text-xs text-gray-500 mt-1">
-              {activeGoals.filter((g) => g.progress < 100).length} ongoing,{" "}
-              {activeGoals.filter((g) => g.progress === 100).length} completed
-            </p>
-            <Button variant="outline" size="sm" className="mt-3 border-gray-300" asChild>
-              <Link href="/dashboard/goals">Manage Goals</Link>
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* AI Insights (AIDEN) */}
-        <Card className="shadow-md border border-gray-200">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium uppercase tracking-wide">AI Insights</CardTitle>
-            <Zap className="h-4 w-4 text-gray-400" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600 line-clamp-2">
-              AIDEN recommends prioritizing delegation techniques this week based on recent journal insights.
-            </p>
-            <Button variant="link" size="sm" className="px-0 mt-2 text-blue-600 hover:text-blue-800">
-              Explore Insights
-            </Button>
-          </CardContent>
-        </Card>
+      {/* Metrics Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {metrics.map((metric, index) => (
+          <Card key={index}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">{metric.title}</CardTitle>
+              <metric.icon className={`h-4 w-4 ${metric.color}`} />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{metric.value}</div>
+              <p className="text-xs text-muted-foreground">
+                <span className="text-green-600">{metric.change}</span> from last month
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="mt-2 h-6 px-2 text-xs"
+                onClick={() => handleAskAiden(`Tell me more about ${metric.title.toLowerCase()}`)}
+              >
+                Ask Aiden
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Recent Activity */}
-        <Card className="shadow-md border border-gray-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 uppercase tracking-wide text-sm font-medium">
-              <Activity className="h-5 w-5" /> Recent Activity
-            </CardTitle>
-            <CardDescription>Latest updates from your coaching journey.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {recentActivity.map((activity) => (
-              <div key={activity.id} className="flex items-start gap-2">
-                <div className="flex-shrink-0 pt-1">
-                  {activity.type === "Session Summary" && <MessageSquare className="h-4 w-4 text-blue-500" />}
-                  {activity.type === "Resource Added" && <FileText className="h-4 w-4 text-green-500" />}
-                  {activity.type === "Goal Update" && <Target className="h-4 w-4 text-yellow-500" />}
+      {/* Main Content Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="reports">Reports</TabsTrigger>
+          <TabsTrigger value="settings">Settings</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+            {/* Recent Activities */}
+            <Card className="col-span-4">
+              <CardHeader>
+                <CardTitle>Recent Activities</CardTitle>
+                <CardDescription>Latest updates and notifications</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {recentActivities.map((activity) => (
+                  <div key={activity.id} className="flex items-start space-x-4">
+                    <div className="flex-1 space-y-1">
+                      <p className="text-sm font-medium leading-none">{activity.title}</p>
+                      <p className="text-sm text-muted-foreground">{activity.description}</p>
+                      <p className="text-xs text-muted-foreground">{activity.time}</p>
+                    </div>
+                    <Badge variant={activity.type === "success" ? "default" : "secondary"}>{activity.type}</Badge>
+                  </div>
+                ))}
+                <Button
+                  variant="outline"
+                  className="w-full bg-transparent"
+                  onClick={() => handleAskAiden("What are my recent activities and what should I focus on?")}
+                >
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Ask Aiden for Analysis
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Upcoming Tasks */}
+            <Card className="col-span-3">
+              <CardHeader>
+                <CardTitle>Upcoming Tasks</CardTitle>
+                <CardDescription>Your priority items</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {upcomingTasks.map((task) => (
+                  <div key={task.id} className="flex items-center space-x-4">
+                    <div className="flex-1 space-y-1">
+                      <p className="text-sm font-medium leading-none">{task.title}</p>
+                      <p className="text-xs text-muted-foreground">{task.deadline}</p>
+                    </div>
+                    <Badge variant={task.priority === "high" ? "destructive" : "secondary"}>{task.priority}</Badge>
+                  </div>
+                ))}
+                <Button
+                  variant="outline"
+                  className="w-full bg-transparent"
+                  onClick={() => handleAskAiden("Help me prioritize my upcoming tasks")}
+                >
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Ask Aiden to Prioritize
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Progress Overview */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Strategic Progress Overview</CardTitle>
+              <CardDescription>Track your key initiatives and objectives</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Digital Transformation Initiative</span>
+                  <span className="text-sm text-muted-foreground">75%</span>
                 </div>
-                <div>
-                  <p className="text-sm font-medium">{activity.title}</p>
-                  <p className="text-xs text-gray-500">
-                    {activity.date} — {activity.type}
-                  </p>
+                <Progress value={75} className="h-2" />
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Operational Excellence Program</span>
+                  <span className="text-sm text-muted-foreground">60%</span>
+                </div>
+                <Progress value={60} className="h-2" />
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Cybersecurity Enhancement</span>
+                  <span className="text-sm text-muted-foreground">90%</span>
+                </div>
+                <Progress value={90} className="h-2" />
+              </div>
+              <Button
+                variant="outline"
+                className="w-full mt-4 bg-transparent"
+                onClick={() => handleAskAiden("Analyze my strategic progress and suggest improvements")}
+              >
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Get Aiden's Strategic Analysis
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Analytics Dashboard</CardTitle>
+              <CardDescription>Detailed performance metrics and insights</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[400px] flex items-center justify-center border-2 border-dashed border-muted-foreground/25 rounded-lg">
+                <div className="text-center space-y-2">
+                  <BarChart3 className="h-12 w-12 mx-auto text-muted-foreground" />
+                  <p className="text-muted-foreground">Analytics charts will be displayed here</p>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleAskAiden("Show me detailed analytics and insights for my performance metrics")}
+                  >
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Ask Aiden for Analytics
+                  </Button>
                 </div>
               </div>
-            ))}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-        {/* Key Resources */}
-        <Card className="shadow-md border border-gray-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 uppercase tracking-wide text-sm font-medium">
-              <BookOpen className="h-5 w-5" /> Key Resources
-            </CardTitle>
-            <CardDescription>Access important coaching tools.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <Link href="#" className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
-              <FileText className="h-4 w-4" /> Leadership Self-Assessment Q2.pdf
-            </Link>
-            <Link href="#" className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
-              <FileText className="h-4 w-4" /> Strategic Thinking Workbook.docx
-            </Link>
-            <Link href="#" className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
-              <Zap className="h-4 w-4" /> AIDEN Goal Prioritization Tool
-            </Link>
-            <Button variant="outline" size="sm" className="mt-2 border-gray-300" asChild>
-              <Link href="/dashboard/resources">View All Resources</Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+        <TabsContent value="reports" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Reports & Documentation</CardTitle>
+              <CardDescription>Access your reports and strategic documents</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[400px] flex items-center justify-center border-2 border-dashed border-muted-foreground/25 rounded-lg">
+                <div className="text-center space-y-2">
+                  <FileText className="h-12 w-12 mx-auto text-muted-foreground" />
+                  <p className="text-muted-foreground">Reports and documents will be displayed here</p>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleAskAiden("Help me generate a strategic report for this quarter")}
+                  >
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Ask Aiden to Generate Report
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="settings" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Dashboard Settings</CardTitle>
+              <CardDescription>Customize your dashboard preferences</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[400px] flex items-center justify-center border-2 border-dashed border-muted-foreground/25 rounded-lg">
+                <div className="text-center space-y-2">
+                  <Settings className="h-12 w-12 mx-auto text-muted-foreground" />
+                  <p className="text-muted-foreground">Settings panel will be displayed here</p>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleAskAiden("Help me optimize my dashboard settings and preferences")}
+                  >
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Ask Aiden for Optimization
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* Aiden Assistant */}
+      <AidenAssistant />
     </div>
   )
 }

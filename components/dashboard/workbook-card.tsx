@@ -1,64 +1,39 @@
-"use client"
-
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
-import { BookText, Lock } from "lucide-react"
-import type { User, Workbook, UserRole } from "@/lib/types" // Assuming User and Workbook types are defined
+import { Edit, Eye } from "lucide-react"
 
 interface WorkbookCardProps {
-  workbook: Workbook
-  currentUser: User | null // Pass the current user object
+  title: string
+  description: string
+  lastEdited: string
+  progress: number
 }
 
-// This is a simplified check. Real RBAC would be more complex.
-function canAccessWorkbook(workbook: Workbook, userRole: UserRole | undefined): boolean {
-  if (!userRole) return false
-  if (userRole === "admin" || userRole === "coach") return true // Admins/Coaches can access all
-
-  // Check if workbook is for specific phases and user is in one of them
-  if (workbook.phases && workbook.phases.length > 0) {
-    return workbook.phases.includes(userRole)
-  }
-
-  // Check if workbook requires a specific role
-  if (workbook.requiredRole) {
-    return userRole === workbook.requiredRole
-  }
-
-  return false // Default to no access
-}
-
-export function WorkbookCard({ workbook, currentUser }: WorkbookCardProps) {
-  const hasAccess = canAccessWorkbook(workbook, currentUser?.role)
-
+export function WorkbookCard({ title, description, lastEdited, progress }: WorkbookCardProps) {
   return (
-    <Card className={`shadow-sm ${!hasAccess ? "opacity-60 bg-gray-50 dark:bg-gray-800/50" : ""}`}>
+    <Card>
       <CardHeader>
-        <div className="flex items-center gap-2">
-          <BookText className={`h-5 w-5 ${hasAccess ? "text-purple-600" : "text-gray-400"}`} />
-          <CardTitle>{workbook.title}</CardTitle>
-        </div>
-        {workbook.phases && workbook.phases.length > 0 && (
-          <CardDescription>Available for: {workbook.phases.join(", ").replace(/client/g, "")}</CardDescription>
-        )}
-        {workbook.requiredRole && <CardDescription>Requires role: {workbook.requiredRole}</CardDescription>}
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
       </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground line-clamp-2">
-          {hasAccess
-            ? `Access the content for ${workbook.title}.`
-            : "You do not have access to this workbook with your current role."}
-        </p>
-      </CardContent>
-      <CardFooter>
-        {hasAccess ? (
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white">Open Workbook</Button>
-        ) : (
-          <Button variant="outline" disabled className="cursor-not-allowed">
-            <Lock className="mr-2 h-4 w-4" /> Locked
+      <CardContent className="grid gap-4">
+        <div className="flex items-center justify-between text-sm text-gray-500">
+          <span>Last Edited: {lastEdited}</span>
+          <span>Progress: {progress}%</span>
+        </div>
+        <Progress value={progress} />
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" size="sm">
+            <Eye className="h-4 w-4 mr-2" />
+            View
           </Button>
-        )}
-      </CardFooter>
+          <Button variant="outline" size="sm">
+            <Edit className="h-4 w-4 mr-2" />
+            Edit
+          </Button>
+        </div>
+      </CardContent>
     </Card>
   )
 }
